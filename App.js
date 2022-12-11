@@ -1,117 +1,112 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
+import 'react-native-gesture-handler';
 import React from 'react';
-import type {Node} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {Image, SafeAreaView, StatusBar, Text, View} from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Parse from 'parse/react-native';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {UserRegistration} from './UserRegistration';
+import {UserLogIn} from './UserLogIn';
+import {UserLogOut} from './UserLogOut';
+import {HelloUser} from './HelloUser';
+import Styles from './Styles';
 
-/* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
- * LTI update could not be added via codemod */
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
+// Your Parse initialization configuration goes here
+Parse.setAsyncStorage(AsyncStorage);
+
+const PARSE_APPLICATION_ID = 'YOUR_PARSE_APPLICATION_ID';
+const PARSE_HOST_URL = 'https://parseapi.Logic.com/';
+const PARSE_JAVASCRIPT_ID = 'YOUR_PARSE_JAVASCRIPT_ID';
+Parse.initialize(PARSE_APPLICATION_ID, PARSE_JAVASCRIPT_ID);
+Parse.serverURL = PARSE_HOST_URL;
+
+// Wrap your old app screen in a separate function, so you can create a screen inside the navigator
+// You can also declare your screens in a separate file, export and import here to reduce some clutter
+function UserRegistrationScreen() {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
-
-const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <>
+      <StatusBar />
+      <SafeAreaView style={Styles.login_container}>
+        <View style={Styles.login_header}>
+          {/* <Image
+            style={Styles.login_header_logo}
+            source={require('./assets/logo-Logic.png')}
+          /> */}
+          <Text style={Styles.login_header_text}>
+            <Text style={Styles.login_header_text_bold}>
+              {'React Native on Logic - '}
+            </Text>
+            {' User registration'}
+          </Text>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+        <UserRegistration />
+      </SafeAreaView>
+    </>
+  );
+}
+
+function UserLogInScreen() {
+  return (
+    <>
+      <StatusBar />
+      <SafeAreaView style={Styles.login_container}>
+        <View style={Styles.login_header}>
+          {/* <Image
+            style={Styles.login_header_logo}
+            source={require('./assets/logo-Logic.png')}
+          /> */}
+          <Text style={Styles.login_header_text}>
+            <Text style={Styles.login_header_text_bold}>
+              {'React Native on Logic - '}
+            </Text>
+            {' User login'}
+          </Text>
+        </View>
+        <UserLogIn />
+      </SafeAreaView>
+    </>
+  );
+}
+
+function HomeScreen() {
+  return (
+    <>
+      <StatusBar />
+      <SafeAreaView style={Styles.login_container}>
+        <View style={Styles.login_header}>
+          {/* <Image
+            style={Styles.login_header_logo}
+            source={require('./assets/logo-Logic.png')}
+          /> */}
+          <Text style={Styles.login_header_text}>
+            <Text style={Styles.login_header_text_bold}>
+              {'React Native on Logic - '}
+            </Text>
+            {' Home'}
+          </Text>
+        </View>
+        <HelloUser />
+        <UserLogOut />
+      </SafeAreaView>
+    </>
+  );
+}
+
+// This method instantiates and creates a new StackNavigator
+const Stack = createStackNavigator();
+
+// Add the stack navigator and inside it you can insert all your app screens, in the desired order
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={UserLogInScreen} />
+        <Stack.Screen name="Sign Up" component={UserRegistrationScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;
